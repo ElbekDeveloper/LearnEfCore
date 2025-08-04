@@ -1,0 +1,89 @@
+﻿using LearnEfCore.Data;
+using LearnEfCore.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace LearnEfCore.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class StudentsController : ControllerBase
+    {
+        private readonly ApplicationDbContext applicationDbContext;
+
+        public StudentsController(ApplicationDbContext applicationDbContext)
+        {
+            this.applicationDbContext = applicationDbContext;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Student>> PostStudentAsync(Student student)
+        {
+            this.applicationDbContext.Entry(student).State = EntityState.Added;
+            await applicationDbContext.SaveChangesAsync();
+            
+            return Ok(student);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Student>>> GetAllStudentsAsync()
+        {
+            List<Student> students = 
+                await this.applicationDbContext.Students.ToListAsync();
+
+            return Ok(students);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<List<Student>>> GetStudentByIdAsync(Guid id)
+        {
+            Student? student =
+                await this.applicationDbContext.Students.FirstOrDefaultAsync(
+                    student => student.Id == id);
+
+            if(student is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(student);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Student>> PutStudentAsync(Student student)
+        {
+            Student? maybeStudent =
+                await this.applicationDbContext.Students.FirstOrDefaultAsync(
+                    student => student.Id == student.Id);
+
+            if (maybeStudent is null)
+            {
+                return NotFound();
+            }
+
+            this.applicationDbContext.Entry(student).State = EntityState.Modified;
+            await this.applicationDbContext.SaveChangesAsync();
+
+            return Ok(student);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Student>> DeleteStudentByIdAsync(Guid id)
+        {
+            Student? student =
+                await this.applicationDbContext.Students.FirstOrDefaultAsync(
+                    student => student.Id == id);
+
+            if (student is null)
+            {
+                return NotFound();
+            }
+
+            //this.applicationDbContext.Students.Remove(student);
+            this.applicationDbContext.Entry(student).State = EntityState.Deleted;
+            await this.applicationDbContext.SaveChangesAsync();
+
+            return Ok(student);
+        }
+    }
+}
