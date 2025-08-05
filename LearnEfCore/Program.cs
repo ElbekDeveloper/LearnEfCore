@@ -1,4 +1,6 @@
 
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using LearnEfCore.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +17,16 @@ namespace LearnEfCore
             builder.Services.AddDbContext<ApplicationDbContext>(options => 
                 options.UseNpgsql(connectionString));
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions
+                        .ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                });
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 

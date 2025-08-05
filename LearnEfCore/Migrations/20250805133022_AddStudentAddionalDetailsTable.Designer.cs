@@ -3,6 +3,7 @@ using System;
 using LearnEfCore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LearnEfCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250805133022_AddStudentAddionalDetailsTable")]
+    partial class AddStudentAddionalDetailsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,28 +25,6 @@ namespace LearnEfCore.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LearnEfCore.Models.Card", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Code")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("ExpireTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Cards");
-                });
-
             modelBuilder.Entity("LearnEfCore.Models.Student", b =>
                 {
                     b.Property<Guid>("Id")
@@ -51,15 +32,19 @@ namespace LearnEfCore.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Code")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -74,9 +59,11 @@ namespace LearnEfCore.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Details")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid>("StudentId")
@@ -90,21 +77,6 @@ namespace LearnEfCore.Migrations
                     b.ToTable("StudentAdditionalDetails");
                 });
 
-            modelBuilder.Entity("LearnEfCore.Models.StudentTeacher", b =>
-                {
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("StudentId", "TeacherId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("StudentTeachers");
-                });
-
             modelBuilder.Entity("LearnEfCore.Models.Teacher", b =>
                 {
                     b.Property<Guid>("Id")
@@ -112,15 +84,19 @@ namespace LearnEfCore.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Code")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -135,22 +111,12 @@ namespace LearnEfCore.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("LearnEfCore.Models.Card", b =>
-                {
-                    b.HasOne("LearnEfCore.Models.Student", "Student")
-                        .WithMany("Card")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("LearnEfCore.Models.StudentAdditionalDetail", b =>
@@ -164,37 +130,10 @@ namespace LearnEfCore.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("LearnEfCore.Models.StudentTeacher", b =>
-                {
-                    b.HasOne("LearnEfCore.Models.Student", "Student")
-                        .WithMany("StudentTeachers")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LearnEfCore.Models.Teacher", "Teacher")
-                        .WithMany("StudentTeachers")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-
-                    b.Navigation("Teacher");
-                });
-
             modelBuilder.Entity("LearnEfCore.Models.Student", b =>
                 {
-                    b.Navigation("Card");
-
-                    b.Navigation("StudentAdditionalDetail");
-
-                    b.Navigation("StudentTeachers");
-                });
-
-            modelBuilder.Entity("LearnEfCore.Models.Teacher", b =>
-                {
-                    b.Navigation("StudentTeachers");
+                    b.Navigation("StudentAdditionalDetail")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

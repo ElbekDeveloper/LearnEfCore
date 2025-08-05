@@ -3,6 +3,7 @@ using System;
 using LearnEfCore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LearnEfCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250805140205_AddCardsTable")]
+    partial class AddCardsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,21 +93,6 @@ namespace LearnEfCore.Migrations
                     b.ToTable("StudentAdditionalDetails");
                 });
 
-            modelBuilder.Entity("LearnEfCore.Models.StudentTeacher", b =>
-                {
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("StudentId", "TeacherId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("StudentTeachers");
-                });
-
             modelBuilder.Entity("LearnEfCore.Models.Teacher", b =>
                 {
                     b.Property<Guid>("Id")
@@ -164,37 +152,11 @@ namespace LearnEfCore.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("LearnEfCore.Models.StudentTeacher", b =>
-                {
-                    b.HasOne("LearnEfCore.Models.Student", "Student")
-                        .WithMany("StudentTeachers")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LearnEfCore.Models.Teacher", "Teacher")
-                        .WithMany("StudentTeachers")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-
-                    b.Navigation("Teacher");
-                });
-
             modelBuilder.Entity("LearnEfCore.Models.Student", b =>
                 {
                     b.Navigation("Card");
 
                     b.Navigation("StudentAdditionalDetail");
-
-                    b.Navigation("StudentTeachers");
-                });
-
-            modelBuilder.Entity("LearnEfCore.Models.Teacher", b =>
-                {
-                    b.Navigation("StudentTeachers");
                 });
 #pragma warning restore 612, 618
         }

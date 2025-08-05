@@ -29,7 +29,10 @@ namespace LearnEfCore.Controllers
         public async Task<ActionResult<List<Student>>> GetAllStudentsAsync()
         {
             List<Student> students = 
-                await this.applicationDbContext.Students.ToListAsync();
+                await this.applicationDbContext.Students
+                    .Include(student => student.StudentAdditionalDetail)
+                    .Include(student => student.Card)
+                        .ToListAsync();
 
             return Ok(students);
         }
@@ -47,6 +50,18 @@ namespace LearnEfCore.Controllers
             }
 
             return Ok(student);
+        }
+
+        [HttpGet("{studentId}/teachers")] //api/students/{studentId}/teachers
+        public async Task<ActionResult<IQueryable>> GetTeachersByStudentIdAsync(Guid studentId)
+        {
+            IQueryable teachers =
+                this.applicationDbContext.StudentTeachers
+                    .Where(studentTeacher => studentTeacher.StudentId == studentId)
+                    .Include(studentTeacher => studentTeacher.Teacher)
+                    .Select(studentTeacher => studentTeacher.Teacher);
+
+            return Ok(teachers);
         }
 
         [HttpPut]
